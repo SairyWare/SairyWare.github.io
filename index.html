@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>SairyWare – Luau Obfuscator</title>
+  <style>
+    body { 
+      font-family: Arial, sans-serif; 
+      margin: 30px; 
+      background: #0f0f0f; 
+      color: #e8e8e8;
+    }
+    h1 { text-align:center; color:#6ad5ff; }
+    textarea { 
+      width: 100%; 
+      height: 180px; 
+      margin-bottom: 10px; 
+      background:#1a1a1a; 
+      color:#d0d0d0; 
+      border:1px solid #333; 
+      padding:10px;
+    }
+    button { 
+      padding: 10px 20px; 
+      font-size: 16px; 
+      background:#6ad5ff; 
+      border:none; 
+      color:#000;
+      cursor:pointer; 
+      border-radius: 5px;
+      font-weight:bold;
+    }
+    button:hover {
+      background:#98e3ff;
+    }
+    .footer {
+      text-align:center; 
+      margin-top:40px; 
+      color:#666;
+      font-size:14px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>SairyWare – Luau Obfuscator</h1>
+
+  <textarea id="inputCode" placeholder="Paste your Luau code here..."></textarea>
+  <button onclick="obfuscate()">Obfuscate</button>
+  <textarea id="outputCode" placeholder="Obfuscated code will appear here..."></textarea>
+
+  <script>
+    function randomName() {
+      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      let out = "_";
+      for (let i = 0; i < 8; i++) out += chars[Math.floor(Math.random() * chars.length)];
+      return out;
+    }
+
+    function scrambleVariables(code) {
+      return code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, match => {
+        const blacklist = [
+          "local","function","end","then","if","return",
+          "for","while","do","repeat","until","nil","true","false"
+        ];
+        if (blacklist.includes(match)) return match;
+        return randomName();
+      });
+    }
+
+    function obfuscate() {
+      let code = document.getElementById("inputCode").value;
+
+      if (!code.trim()) {
+        alert("Please paste your Luau code first.");
+        return;
+      }
+
+      let scrambled = scrambleVariables(code);
+      let encoded = btoa(scrambled);
+
+      let loader = `
+-- SairyWare – simple Luau obfuscation
+local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+
+local function decode(data)
+    data = string.gsub(data, '[^'..b..'=]', '')
+    return (data:gsub('.', function(x)
+        if (x == '=') then return '' end
+        local r,f='',(b:find(x)-1)
+        for i=6,1,-1 do r = r..(f%2^i - f%2^(i-1) > 0 and '1' or '0') end
+        return r;
+    end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
+        if (#x ~= 8) then return '' end
+        local c=0
+        for i=1,8 do c = c + (x:sub(i,i)=='1' and 2^(8-i) or 0) end
+        return string.char(c)
+    end))
+end
+
+loadstring(decode("${encoded}"))()
+`;
+
+      document.getElementById("outputCode").value = loader.trim();
+    }
+  </script>
+
+  <div class="footer">© 2025 SairyWare – Simple Luau Web Obfuscator</div>
+
+</body>
+</html>
