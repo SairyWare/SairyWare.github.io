@@ -1,111 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SairyWare – Luau Obfuscator</title>
-  <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      margin: 30px; 
-      background: #0f0f0f; 
-      color: #e8e8e8;
-    }
-    h1 { text-align:center; color:#6ad5ff; }
-    textarea { 
-      width: 100%; 
-      height: 180px; 
-      margin-bottom: 10px; 
-      background:#1a1a1a; 
-      color:#d0d0d0; 
-      border:1px solid #333; 
-      padding:10px;
-    }
-    button { 
-      padding: 10px 20px; 
-      font-size: 16px; 
-      background:#6ad5ff; 
-      border:none; 
-      color:#000;
-      cursor:pointer; 
-      border-radius: 5px;
-      font-weight:bold;
-    }
-    button:hover {
-      background:#98e3ff;
-    }
-    .footer {
-      text-align:center; 
-      margin-top:40px; 
-      color:#666;
-      font-size:14px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hercules Obfuscator Web</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <h1>🧩 Hercules Obfuscator (Web Version)</h1>
+        
+        <div class="input-section">
+            <textarea id="luaCode" placeholder="Paste your Lua code here..."></textarea>
+        </div>
 
-  <h1>SairyWare – Luau Obfuscator</h1>
+        <div class="controls">
+            <label>
+                <input type="checkbox" id="enableMinify" checked>
+                Enable Minify
+            </label>
+            <label>
+                <input type="checkbox" id="enableEncryption" checked>
+                Enable Encryption
+            </label>
+            
+            <div class="slider-container">
+                <label>Obfuscation Level:</label>
+                <input type="range" id="obfLevel" min="1" max="10" value="5">
+                <span id="levelValue">5</span>
+            </div>
+        </div>
 
-  <textarea id="inputCode" placeholder="Paste your Luau code here..."></textarea>
-  <button onclick="obfuscate()">Obfuscate</button>
-  <textarea id="outputCode" placeholder="Obfuscated code will appear here..."></textarea>
+        <button id="obfuscateBtn">Obfuscate Code</button>
 
-  <script>
-    function randomName() {
-      const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-      let out = "_";
-      for (let i = 0; i < 8; i++) out += chars[Math.floor(Math.random() * chars.length)];
-      return out;
-    }
+        <div class="output-section">
+            <textarea id="outputCode" readonly placeholder="Obfuscated code will appear here..."></textarea>
+            <button id="copyBtn">Copy to Clipboard</button>
+        </div>
 
-    function scrambleVariables(code) {
-      return code.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g, match => {
-        const blacklist = [
-          "local","function","end","then","if","return",
-          "for","while","do","repeat","until","nil","true","false"
-        ];
-        if (blacklist.includes(match)) return match;
-        return randomName();
-      });
-    }
+        <div class="info">
+            <h3>⚠️ Limitations in Web Version:</h3>
+            <ul>
+                <li>Some advanced obfuscation features may not work in browser</li>
+                <li>Large files may cause performance issues</li>
+                <li>No file system access (upload/download only)</li>
+            </ul>
+        </div>
+    </div>
 
-    function obfuscate() {
-      let code = document.getElementById("inputCode").value;
-
-      if (!code.trim()) {
-        alert("Please paste your Luau code first.");
-        return;
-      }
-
-      let scrambled = scrambleVariables(code);
-      let encoded = btoa(scrambled);
-
-      let loader = `
--- SairyWare – simple Luau obfuscation
-local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-
-local function decode(data)
-    data = string.gsub(data, '[^'..b..'=]', '')
-    return (data:gsub('.', function(x)
-        if (x == '=') then return '' end
-        local r,f='',(b:find(x)-1)
-        for i=6,1,-1 do r = r..(f%2^i - f%2^(i-1) > 0 and '1' or '0') end
-        return r;
-    end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
-        if (#x ~= 8) then return '' end
-        local c=0
-        for i=1,8 do c = c + (x:sub(i,i)=='1' and 2^(8-i) or 0) end
-        return string.char(c)
-    end))
-end
-
-loadstring(decode("${encoded}"))()
-`;
-
-      document.getElementById("outputCode").value = loader.trim();
-    }
-  </script>
-
-  <div class="footer">© 2025 SairyWare – Simple Luau Web Obfuscator</div>
-
+    <script src="obfuscator.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
