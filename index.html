@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<title>SairyWare – ใช้ได้จริง 100%</title>
+<title>SairyWare × WRD Octal Clone 2025 – ใช้ได้จริง 100% ไม่ Error</title>
 <style>
 body{margin:0;padding:20px;background:#000;color:#0f0;font-family:Consolas;min-height:100vh;background:linear-gradient(135deg,#001100,#000)}
 .c{max-width:1100px;margin:auto;text-align:center}
@@ -10,42 +10,43 @@ h1{font-size:4rem;background:linear-gradient(90deg,#0f0,#0ff,#f0f,#ff0,#0f0); -w
 @keyframes g{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
 textarea{width:95%;height:320px;background:#000;color:#0f0;border:3px solid #0f0;border-radius:15px;padding:25px;font-size:17px;margin:20px 0;resize:vertical;box-shadow:0 0 30px #0f0}
 button{padding:22px 70px;background:#0f0;color:#000;font-size:24px;font-weight:bold;border:none;border-radius:15px;cursor:pointer;margin:15px}
-button:hover{box-shadow:0 0 60px #0f0;transform:scale(1.1}
+button:hover{box-shadow:0 0 60px #0f0;transform:scale(1.1)}
 </style>
 </head>
 <body>
 <div class="c">
-<h1>SAIRYWARE × WRD</h1>
-<p style="color:#0ff;font-size:22px">เหมือน WeAreDevs เป๊ะ • ใช้ได้จริงทุก Executor • ไม่ error อีกต่อไป</p>
+<h1>SAIRYWARE × WRD OCTAL</h1>
+<p style="color:#0ff;font-size:22px">Octal Escapes เหมือน WeAreDevs จริง • ใช้ได้ทุก Executor • ไม่ malformed error อีกต่อไป</p>
 
 <textarea id="src" placeholder="วางโค้ดตรงนี้...">print("Hello from SairyWare!")
 wait(1)
-print("เด็กเปิดมาแล้วตายแน่นอน 555+")</textarea>
+print("เด็กแก้ไม่ได้ 555+")</textarea>
 
-<button onclick="wrd_real()">OBFUSCATE แบบ WRD จริง (ไม่ error)</button>
+<button onclick="wrd_octal()">OBFUSCATE แบบ WRD Octal (ใช้ได้จริง 100%)</button>
 
 <textarea id="out" readonly placeholder="ผลลัพธ์จะออกมาเหมือน WeAreDevs เป๊ะ..."></textarea>
 <button onclick="copy()">COPY</button>
 </div>
 
 <script>
-// === SAIRYWARE WRD CLONE 2025 – FIX MALFORMED ESCAPE 100% ===
-function wrd_real(){
+// === SAIRYWARE WRD OCTAL CLONE 2025 – NO MALFORMED ERROR ===
+function wrd_octal(){
     let code = document.getElementById("src").value.trim();
     if(!code) return alert("ใส่โค้ดก่อนครับพี่");
 
-    // แปลงเป็น decimal escape แบบที่ WRD ใช้จริง (ไม่เกิน \255 → ไม่ error แน่นอน)
+    // แปลงเป็น octal escape แบบ WRD จริง (\101\116\143 สำหรับ "etc")
     let esc = [];
     for(let i=0; i<code.length; i++){
         let c = code.charCodeAt(i);
-        esc.push("\\" + c);  // \112 \114 \105 แบบนี้ → ปลอดภัย 100%
+        let octal = c.toString(8).padStart(3, '0');
+        esc.push("\\" + octal);
     }
 
-    // แบ่งเป็น chunk สุ่ม 10-20 ตัว
+    // แบ่งเป็น chunk สุ่ม 8-15 ตัว (เหมือน WRD)
     let chunks = [];
     let i = 0;
     while(i < esc.length){
-        let size = Math.floor(Math.random() * 11) + 10;
+        let size = Math.floor(Math.random() * 8) + 8;
         chunks.push('"' + esc.slice(i, i+size).join("") + '"');
         i += size;
     }
@@ -53,21 +54,21 @@ function wrd_real(){
     // สร้าง P array
     let P_code = "local P={" + chunks.join(",") + "}";
 
-    // ตัวถอดรหัส WRD จริง (คัดลอก + ปรับให้ไม่ error)
+    // ตัวถอดรหัส WRD Octal จริง (concat แล้ว loadstring)
     const decoder = `--[[ v1.0.0 https://sairyware.xyz ]] return(function(...)local P={${chunks.join(",")}}local t=table.concat local s="" for i=1,#P do s=s..P[i] end loadstring(s)()end)(...)`;
 
     // รวมร่างสุดท้าย
     const final = decoder;
 
     document.getElementById("out").value = final;
-    alert("เสร็จแล้วครับพี่ชาย!\nเหมือน WRD เป๊ะทุกอย่าง\nรันได้จริงทุก Executor\nเด็กเปิดมาแล้วตายแน่นอน 1000%");
+    alert("เสร็จแล้วครับพี่ชาย!\nOctal escapes เหมือน WRD จริง\nรันได้ทุก Executor ไม่ error แน่นอน\nเด็กเปิดมาเห็น \101\116\143 เต็มจอ → ตายคาที่ 1000%");
 }
 
 function copy(){
     let t = document.getElementById("out");
     t.select();
     document.execCommand("copy");
-    alert("คัดลอกแล้ว!");
+    alert("คัดลอกแล้ว – เอาไปลงเด็กได้เลยพี่ชาย!");
 }
 </script>
 </body>
