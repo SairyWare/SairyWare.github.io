@@ -674,298 +674,68 @@ print("Damage dealt: " .. damage)</textarea>
     </div>
 
     <script>
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
+    // SAIRYWARE ONELINER EDITION v3.0 — THE MOST BEAUTIFUL & POWERFUL (2025)
+    
+    const W = `--[[ SairyWare Protected ]]\n`;
+    
+    function b64(e){return btoa(unescape(encodeURIComponent(e)))}
+    
+    function obfuscate(){
+        let c = document.getElementById('inputCode').value.trim();
+        if(!c) return alert("ใส่โค้ดก่อนครับพี่ชาย");
+    
+        const lvl = +document.getElementById('obfuscationLevel').value;
+        const sd = document.getElementById('selfDestruct').checked;
+        const at = document.getElementById('antiTamper').checked;
+    
+        let payload = c;
+    
+        // Anti-Tamper
+        if(at) payload = `if not game or typeof(game)~="Instance" then return end\n` + payload;
+    
+        // Self-Destruct (ใช้ hash เดียวกัน ไม่ตายเองอีกต่อไป!)
+        if(sd){
+            const h = Math.random().toString(36).slice(2,12);
+            payload = `if getfenv().__OBFUSCATED~="${h}"then for i=1,999 do getfenv()[tostring(i)]=nil end error("SairyWare: Script tampered!")end getfenv().__OBFUSCATED="${h}"\n` + payload;
+        }
+    
+        }
+    
+        // สุดยอด One-Liner ที่สวยที่สุดในปี 2025
+        const final = `${W}loadstring((function(d)local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';d=d:gsub('[^'..b..'=]','');return(d:gsub('.',function(x)if x=='='then return''end;local r,f='',(b:find(x)-1)for i=6,1,-1 do r=r..(f%2^i-f%2^(i-1)>0 and'1'or'0')end;return rend):gsub('%d%d%d%d?%d?%d?%d?%d?%d?',function(x)if#x~=8 then return''end;local c=0;for i=1,8 do c=c+(x:sub(i,i)=='1'and 2^(8-i)or 0)end;return string.char(c)end))end)("${b64(payload)}"))()`;
+    
+        document.getElementById('outputCode').value = final;
+        updateStats();
+        document.getElementById('stats').innerHTML = `<div style="color:#6ad5ff">SairyWare One-Liner • Level ${lvl} • Protected & Sexy</div>`;
+    }
+    
+    function updateStats(){
+        const i = document.getElementById('inputCode').value;
+        document.getElementById('inputLines').textContent = `Lines: ${i.split('\n').length}`;
+        document.getElementById('inputChars').textContent = `Chars: ${i.length}`;
+        const o = document.getElementById('outputCode').value;
+        if(o){
+            document.getElementById('outputLines').textContent = `Lines: 2`;
+            document.getElementById('outputChars').textContent = `Chars: ${o.length}`;
+        }
+    }
+    
+    function copyToClipboard(){
+        const t = document.getElementById('outputCode');
+        t.select(); document.execCommand('copy');
+        const b = document.querySelector('.btn-copy');
+        const o = b.innerHTML; b.innerHTML = 'Copied!'; 
+        setTimeout(()=>b.innerHTML=o,2000);
+    }
+    
+    function clearCode(){
+        if(confirm("ล้างจริงดิ?")){ 
+            document.getElementById('inputCode').value = 
+            document.getElementById('outputCode').value = '';
+            document.getElementById('stats').innerHTML = 'Click "Obfuscate"';
             updateStats();
-            document.getElementById('inputCode').addEventListener('input', updateStats);
-            document.getElementById('obfuscationLevel').addEventListener('input', function() {
-                document.getElementById('sliderValue').textContent = this.value;
-            });
-        });
-
-        // Update statistics
-        function updateStats() {
-            const input = document.getElementById('inputCode').value;
-            const inputLines = input.split('\n').length;
-            const inputChars = input.length;
-            
-            document.getElementById('inputLines').textContent = `Lines: ${inputLines}`;
-            document.getElementById('inputChars').textContent = `Chars: ${inputChars}`;
-            
-            const output = document.getElementById('outputCode').value;
-            if (output) {
-                const outputLines = output.split('\n').length;
-                const outputChars = output.length;
-                const ratio = outputChars > 0 ? Math.round((outputChars / inputChars) * 100) : 0;
-                
-                document.getElementById('outputLines').textContent = `Lines: ${outputLines}`;
-                document.getElementById('outputChars').textContent = `Chars: ${outputChars}`;
-            }
         }
-
-        // Generate random names for variables
-        function randomName() {
-            const chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            let out = "_";
-            for (let i = 0; i < 10; i++) out += chars[Math.floor(Math.random() * chars.length)];
-            return out;
-        }
-
-        // Scramble variable names
-        function scrambleVariables(code, intensity) {
-            const blacklist = [
-                "local", "function", "end", "then", "if", "return", "for", "while",
-                "do", "repeat", "until", "nil", "true", "false", "else", "elseif",
-                "and", "or", "not", "in", "break", "continue", "goto"
-            ];
-            
-            const varMap = new Map();
-            let varCounter = 0;
-            
-            // Find all potential variable names
-            const varRegex = /\b([a-zA-Z_][a-zA-Z0-9_]*)\b/g;
-            const matches = [...code.matchAll(varRegex)];
-            
-            matches.forEach(match => {
-                const varName = match[1];
-                if (!blacklist.includes(varName) && varName.length > 2 && !varMap.has(varName)) {
-                    varMap.set(varName, randomName());
-                }
-            });
-            
-            // Replace variables
-            let result = code;
-            varMap.forEach((newName, oldName) => {
-                const regex = new RegExp(`\\b${oldName}\\b`, 'g');
-                result = result.replace(regex, newName);
-            });
-            
-            return result;
-        }
-
-        // Encrypt strings
-        function encryptStrings(code, intensity) {
-            const stringRegex = /(["'])(?:\\.|(?!\1).)*\1/g;
-            
-            return code.replace(stringRegex, (match) => {
-                // Simple base64 encoding for demonstration
-                // In a real obfuscator, you'd use more complex encryption
-                const encoded = btoa(match);
-                return `(loadstring(game:HttpGet("https://example.com/decode?data=${encodeURIComponent(encoded)}")))()`;
-            });
-        }
-
-        // Insert dead code
-        function insertDeadCode(code, intensity) {
-            const lines = code.split('\n');
-            const result = [];
-            const deadCodeExamples = [
-                'local _ = function() return nil end',
-                'if false then while true do end end',
-                'local __ = "dead" .. "code"',
-                'for i=1,0 do print("never") end',
-                'do local _=0 end',
-                'local function unused() return math.random(1,100) end',
-                'if true == false then print("impossible") end'
-            ];
-            
-            lines.forEach(line => {
-                result.push(line);
-                // Add dead code based on intensity
-                if (Math.random() < (intensity * 0.08) && line.trim() && !line.trim().startsWith('--')) {
-                    const deadCode = deadCodeExamples[Math.floor(Math.random() * deadCodeExamples.length)];
-                    result.push(deadCode);
-                }
-            });
-            
-            return result.join('\n');
-        }
-
-        // Minify code
-        function minifyCode(code, preserveComments) {
-            let result = code;
-            
-            if (!preserveComments) {
-                // Remove single line comments
-                result = result.replace(/--[^\n]*\n/g, '\n');
-                // Remove multi-line comments
-                result = result.replace(/--\[\[[\s\S]*?\]\]/g, '');
-            }
-            
-            // Remove extra whitespace
-            result = result.replace(/\s+/g, ' ');
-            result = result.replace(/\s*([=+\-*/%^#.,:;{}()\[\]])\s*/g, '$1');
-            
-            return result.trim();
-        }
-
-        // Main obfuscation function
-        function obfuscate() {
-            const input = document.getElementById('inputCode').value;
-            
-            if (!input.trim()) {
-                alert("Please enter some Luau code to obfuscate.");
-                return;
-            }
-            
-            // Get settings
-            const intensity = parseInt(document.getElementById('obfuscationLevel').value);
-            const varRename = document.getElementById('varRename').checked;
-            const stringEncrypt = document.getElementById('stringEncrypt').checked;
-            const controlFlow = document.getElementById('controlFlow').checked;
-            const deadCode = document.getElementById('deadCode').checked;
-            const minifyCodeChecked = document.getElementById('minifyCode').checked;
-            const preserveComments = document.getElementById('preserveComments').checked;
-            const antiTamper = document.getElementById('antiTamper').checked;
-            const selfDestruct = document.getElementById('selfDestruct').checked;
-            
-            let result = input;
-            
-            // Apply techniques based on settings
-            if (varRename) {
-                result = scrambleVariables(result, intensity);
-            }
-            
-            if (stringEncrypt && intensity > 3) {
-                result = encryptStrings(result, intensity);
-            }
-            
-            if (deadCode) {
-                result = insertDeadCode(result, intensity);
-            }
-            
-            if (minifyCodeChecked) {
-                result = minifyCode(result, preserveComments);
-            }
-            
-            // Add anti-tamper protection
-            if (antiTamper) {
-                const antiTamperCode = `
--- Anti-tamper protection
-local function verifyEnvironment()
-    if typeof(game) ~= 'Instance' then
-        error("Invalid execution environment")
-        return false
-    end
-    return true
-end
-
-if not verifyEnvironment() then return end
-`;
-                result = antiTamperCode + result;
-            }
-            
-            // Add self-destruct mechanism
-            if (selfDestruct) {
-                const selfDestructCode = `
--- Self-destruct mechanism
-local function checkIntegrity()
-    local scriptHash = "${Math.random().toString(36).substr(2, 9)}"
-    if getfenv(0).__OBFUSCATED ~= scriptHash then
-        for i = 1, 100 do
-            getfenv(0)[tostring(i)] = nil
-        end
-        error("Script integrity compromised")
-    end
-end
-
-getfenv(0).__OBFUSCATED = "${Math.random().toString(36).substr(2, 9)}"
-checkIntegrity()
-`;
-                result = selfDestructCode + result;
-            }
-            
-            // Add loader for string encryption
-            if (stringEncrypt && intensity > 5) {
-                const loader = `
--- SairyWare Obfuscated Script (Level ${intensity})
--- Protected with ${varRename ? 'variable renaming, ' : ''}${stringEncrypt ? 'string encryption, ' : ''}${deadCode ? 'dead code insertion' : ''}
-
-local encoded = "${btoa(result)}"
-
-local function decode(data)
-    local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
-    data = string.gsub(data, '[^'..b..'=]', '')
-    return (data:gsub('.', function(x)
-        if (x == '=') then return '' end
-        local r,f='',(b:find(x)-1)
-        for i=6,1,-1 do r = r..(f%2^i-f%2^(i-1)>0 and '1' or '0') end
-        return r
-    end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
-        if (#x ~= 8) then return '' end
-        local c=0
-        for i=1,8 do c=c+(x:sub(i,i)=='1' and 2^(8-i) or 0) end
-        return string.char(c)
-    end))
-end
-
-loadstring(decode(encoded))()
-`;
-                result = loader;
-            }
-            
-            // Set output
-            document.getElementById('outputCode').value = result;
-            
-            // Update stats
-            updateStats();
-            
-            // Show statistics
-            const inputChars = input.length;
-            const outputChars = result.length;
-            const ratio = Math.round((outputChars / inputChars) * 100);
-            const techniques = [];
-            if (varRename) techniques.push("Variable Renaming");
-            if (stringEncrypt) techniques.push("String Encryption");
-            if (deadCode) techniques.push("Dead Code");
-            if (minifyCodeChecked) techniques.push("Minification");
-            
-            document.getElementById('stats').innerHTML = `
-                <div><i class="fas fa-expand-arrows-alt" style="color: var(--primary);"></i> Size Increase: ${ratio}%</div>
-                <div><i class="fas fa-shield-alt" style="color: var(--primary);"></i> Protection Level: ${intensity}/10</div>
-                <div><i class="fas fa-tools" style="color: var(--primary);"></i> Techniques: ${techniques.join(', ')}</div>
-            `;
-        }
-
-        // Copy to clipboard
-        function copyToClipboard() {
-            const output = document.getElementById('outputCode');
-            
-            if (!output.value.trim()) {
-                alert("No code to copy!");
-                return;
-            }
-            
-            output.select();
-            output.setSelectionRange(0, 99999);
-            
-            try {
-                const successful = document.execCommand('copy');
-                if (successful) {
-                    const copyBtn = document.querySelector('.btn-copy');
-                    const originalText = copyBtn.innerHTML;
-                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Copied!';
-                    copyBtn.style.background = 'linear-gradient(135deg, var(--success), #22c55e)';
-                    
-                    setTimeout(() => {
-                        copyBtn.innerHTML = originalText;
-                        copyBtn.style.background = 'linear-gradient(135deg, var(--success), #22c55e)';
-                    }, 2000);
-                }
-            } catch (err) {
-                alert("Copy failed. Please select and copy manually.");
-            }
-        }
-
-        // Clear all code
-        function clearCode() {
-            if (confirm("Are you sure you want to clear all code?")) {
-                document.getElementById('inputCode').value = '';
-                document.getElementById('outputCode').value = '';
-                document.getElementById('stats').innerHTML = 'Click "Obfuscate Code" to see statistics';
-                updateStats();
-            }
-        }
+    }
     </script>
 </body>
 </html>
